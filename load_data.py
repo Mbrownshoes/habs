@@ -18,7 +18,8 @@ for tr in rows:
     #PHX changed to ARI
     if teamLink == '/teams/PHX/':
         teamLink = '/teams/ARI/'
-    
+
+    # teamLink = '/teams/CBJ/'
     teamUrl="http://www.hockey-reference.com" + teamLink + "2015.html"
     
     # load each teams page
@@ -41,7 +42,7 @@ for tr in rows:
     elif teamLink == '/teams/STL/':
         team_name = 'St. Louis'
 
-    print(team_name)
+    print(teamLink)
 
     players_table=soup.find("table", {'class' : 'sortable'})
 
@@ -118,12 +119,13 @@ for tr in rows:
 
 
         x=assists[players[i]]
-        for j in range(0, len(x)):    
-            try:
+        print(x)
+        for j in range(0, len(x)):  
+            try:  
                 ind=players.index(x[j]+' ')
                 current[ind] += 1
             except:
-            pass
+                pass
 
         matrix.append(current)
     print(matrix)
@@ -141,5 +143,6 @@ for tr in rows:
                 val = 'H. Sedin '    
             else:
                 val = val.split(' ',1)[1]
-            writer.writerow([val, ind])  
+            print(val.encode("utf-8"))
+            writer.writerow([val.encode("utf-8"), ind])  
 

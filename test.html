@@ -3,12 +3,18 @@
 <meta charset="utf-8">
  <head> 
     <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
+  ga('create', 'UA-51435405-4', 'auto');
+  ga('send', 'pageview');
 
 </script>
   <head> 
  
-<link rel="stylesheet" href="main.css">  </head>
+<link rel="stylesheet" href="main1.css">  </head>
 <style>
 
 #circle circle {
@@ -34,9 +40,9 @@ path.chord {
 <body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
-<h1>NHL: Player Chemistry </h1>
+<h1>NHL: Player Chemistry</h1>
 <h2>Analytics even Bruins fans can understand</h2>
-<p>This chart show which players have the best offensive chemistry. Hover over to display the goal production between two players. A thicker line indicates more goals. A line that is thicker at one end indicates that player scores more of the goals when those two connect.<b> 2014-2015 regular season</b></p>
+<p>This chart shows which players have the best offensive chemistry. Hover over to display the goal production between two players. A thicker line indicates more goals. A line that is thicker at one end indicates that player scores more of the goals when those two connect. Colours just differentiate the chords.</p>
 
 <select class="teams">
   <option  value="Anaheim">Anaheim</option>
@@ -482,8 +488,9 @@ document.getElementById("title").innerHTML = $('.teams').val();
 
 
 <p>The line thickness represents the number of goals by each player. Thicker lines represent more goals scored. Updates after each game.</p>
-<p>Built by <a href="http://mbrownshoes.github.io/#/">Mathew Brown</a> using d3.js. Inspired by Mike Bostock's <a href="http://bost.ocks.org/mike/uberdata/">Uber Rides by Neighborhood<p>
+<p>Built by <a href="http://mbrownshoes.github.io/#/">Mathew Brown</a> (mathew.brown@utoronto.ca) using d3.js.<br> Inspired by Mike Bostock's <a href="http://bost.ocks.org/mike/uberdata/">Uber Rides by Neighborhood.<p>
 
 </body>
 
 </html>
+

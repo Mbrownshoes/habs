@@ -9,19 +9,19 @@ masterPage = BeautifulSoup(page)
 table=masterPage.find("table")
 
 rows = table.findAll('tr', {'class':'full_table'})
-
+season = '2017'
 # loop through teams
 for tr in rows:
-    cols = tr.findAll('td')
-    teamLink = cols[0].find('a').get('href')
+    teamLink = tr.find('a').get('href')
+#    teamLink = cols[0].find('a').get('href')
 
     #PHX changed to ARI
     if teamLink == '/teams/PHX/':
         teamLink = '/teams/ARI/'
 
     # teamLink = '/teams/CBJ/'
-    teamUrl="http://www.hockey-reference.com" + teamLink + "2015.html"
-    
+    teamUrl="http://www.hockey-reference.com" + teamLink + season+ ".html"
+
     # load each teams page
     teamPage = urllib2.urlopen(teamUrl)
     soup = BeautifulSoup(teamPage)
@@ -44,8 +44,8 @@ for tr in rows:
 
     print(teamLink)
 
-    players_table=soup.find("table", {'class' : 'sortable'})
-
+#    players_table=soup.find("table", {'class' : 'sortable stats_table'})
+    players_table=soup.find("div", {'id' : 'div_skaters'})
     #find each player and get their url
     all = players_table.find_all("a", href=True)
 
@@ -59,7 +59,7 @@ for tr in rows:
     for x in range (0, len(all)):
         url = all[x]['href']
         ind = re.search(r'/\w+/\w+/\w+', url).group()
-        plyr_url = "http://www.hockey-reference.com" + ind + "/scoring/2015/"
+        plyr_url = "http://www.hockey-reference.com" + ind + "/scoring/"+season
 
         player_page = urllib2.urlopen(plyr_url)
         soup_plyr = BeautifulSoup(player_page)

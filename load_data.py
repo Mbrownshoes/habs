@@ -11,6 +11,7 @@ table=masterPage.find("table")
 rows = table.findAll('tr', {'class':'full_table'})
 season = '2017'
 # loop through teams
+rows = rows[29]
 for tr in rows:
     teamLink = tr.find('a').get('href')
 #    teamLink = cols[0].find('a').get('href')
@@ -84,8 +85,8 @@ for tr in rows:
             # collect the name of players who assisted on his goals
             assists =[]
             for x in range(0,len(goals)):
-                # print(player)
-                # print(x)
+                print(player)
+                print(x)
                 if goals[x].previousSibling == "Goal by ":
                     if goals[x].nextSibling == ", assisted by ":
                         assist1 =  goals[x].findNext('a')

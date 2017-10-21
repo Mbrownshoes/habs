@@ -302,15 +302,15 @@ function updateChords( datasetURL ) {
 //*******************************************************************
 function chordRdr (matrix, mmap) {
   return function (d) {
-    console.log(d)
+    // console.log(d)
     var i,j,s,t,g,m = {};
     if (d.source) {
       i = d.source.index; j = d.target.index;
-      console.log(i,j)
+      // console.log(i,j)
       // console.log(_.where(mmap, {key: i }))
       t = mmap[i]
       s = mmap[j]
-      console.log(s.name, t)
+      // console.log(s.name, t)
       m.sname = s.name;
       m.sdata = d.source.value;
       m.svalue = +d.source.value;
@@ -346,7 +346,7 @@ function chordRdr (matrix, mmap) {
                 .on("mouseout", function (d) { d3.select("#tooltip").style("visibility", "hidden") });
 
      function chordTip (d) {
-        console.log(d)
+        // console.log(d)
             var p = d3.format(".1%"), q = d3.format(",f")
             return d.sname + q(d.svalue) +" assists on " + d.tname +" goals"
               + "<br/>"
@@ -529,7 +529,7 @@ $(document).ready(function(){
     $('.teams').on('change',function(){
         team_name = $('.teams').val();
 document.getElementById("title").innerHTML = $('.teams').val();
-        console.log(team_name)
+        // console.log(team_name)
 
         // updateChords( "Arizona_matrix.json" );
 

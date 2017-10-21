@@ -13,8 +13,8 @@ season = '2017'
 # loop through teams
 
 for tr in rows:
-    print "TR: "
-    print type(tr)
+#    print "TR: "
+    print(type(tr))
     try:
         teamLink = tr.find('a').get('href')
     #    teamLink = cols[0].find('a').get('href')
@@ -150,4 +150,4 @@ for tr in rows:
                 print(val.encode("utf-8"))
                 writer.writerow([val.encode("utf-8"), ind])  
     except:
-        print tr
+        print(tr)

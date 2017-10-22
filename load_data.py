@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup, Tag,SoupStrainer
 
 # load the links to all teams pages
 page = urllib2.urlopen("http://www.hockey-reference.com/teams/")
-masterPage = BeautifulSoup(page)
+masterPage = BeautifulSoup(page, 'html5lib')
 table=masterPage.find("table")
 
 rows = table.findAll('tr', {'class':'full_table'})
@@ -28,7 +28,7 @@ for tr in rows:
     
         # load each teams page
         teamPage = urllib2.urlopen(teamUrl)
-        soup = BeautifulSoup(teamPage)
+        soup = BeautifulSoup(teamPage, 'html5lib')
     
         # get team name
         title = soup.title
@@ -66,7 +66,7 @@ for tr in rows:
             plyr_url = "http://www.hockey-reference.com" + ind + "/scoring/"+season
     
             player_page = urllib2.urlopen(plyr_url)
-            soup_plyr = BeautifulSoup(player_page)
+            soup_plyr = BeautifulSoup(player_page, 'html5lib')
     
             # Get players name
             player = soup_plyr.title.string

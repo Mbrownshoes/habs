@@ -51,7 +51,7 @@ path.chord {
 <script src="underscore.js"></script>
 <h1>NHL: Player Chemistry </h1>
 <h2>Analytics even Bruins fans can understand</h2>
-<p>This chart show which players have the best offensive chemistry. Hover over to display the goal production between two players. A thicker line indicates more goals. A line that is thicker at one end indicates that player scores more of the goals when those two connect.<b> 2016-2017 regular season</b></p>
+<p>This chart show which players have the best offensive chemistry. Hover over to display the goal production between two players. A thicker line indicates more goals. A line that is thicker at one end indicates that player scores more of the goals when those two connect.<b> 2017-2018 regular season</b></p>
 
 <select class="teams">
   <option  value="Anaheim">Anaheim</option>
@@ -96,7 +96,9 @@ var width = 800,
     outerRadius = Math.min(width, height) / 2 - 100,
     innerRadius = outerRadius - 18;
 
-var dataset = "Montreal_matrix2017.json";
+var year = 2018
+
+var dataset = "Montreal_matrix"+year+".json";
 matrix = dataset
 //string url for the initial data set
 //would usually be a file path url, here it is the id
@@ -157,7 +159,7 @@ g.append("circle")
 //no callbacks required.
 
 
-d3.csv("Montreal_players2017.csv", function(error, playerData) {
+d3.csv("Montreal_players"+year+".csv", function(error, playerData) {
 
     if (error) {alert("Error reading file: ", error.statusText); return; }
     

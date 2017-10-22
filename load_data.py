@@ -9,12 +9,12 @@ masterPage = BeautifulSoup(page)
 table=masterPage.find("table")
 
 rows = table.findAll('tr', {'class':'full_table'})
-season = '2017'
+season = '2018'
 # loop through teams
 
 for tr in rows:
 #    print "TR: "
-    print(type(tr))
+    # print(type(tr))
     try:
         teamLink = tr.find('a').get('href')
     #    teamLink = cols[0].find('a').get('href')
@@ -82,14 +82,14 @@ for tr in rows:
                 for tr in table.findAll('tr'):
                     if tr.findAll('a', href=True, text=teamLink[7:10]):
                        goals.append(tr.find_all("a", {'class' : 'highlight_text'}, re.compile(player))[0])    
-                print(player)
+                # print(player)
     #            print(len(goals))
     
                 # collect the name of players who assisted on his goals
                 assists =[]
                 for x in range(0,len(goals)):
-                    print(player)
-                    print(x)
+                    # print(player)
+                    # print(x)
                     if goals[x].previousSibling == "Goal by ":
                         if goals[x].nextSibling == ", assisted by ":
                             assist1 =  goals[x].findNext('a')
@@ -123,7 +123,7 @@ for tr in rows:
     
     
             x=assists[players[i]]
-            print(x)
+            # print(x)
             for j in range(0, len(x)):  
                 try:  
                     ind=players.index(x[j]+' ')
@@ -134,9 +134,9 @@ for tr in rows:
             matrix.append(current)
         print(matrix)
     
-        json.dump(matrix, open(team_name + '_matrix.json', 'wb'))
+        json.dump(matrix, open(team_name + '_matrix'+season+'.json', 'wb'))
     
-        with open(team_name + '_players.csv', "w") as output:
+        with open(team_name + '_players'+season+'.csv', "w") as output:
             writer = csv.writer(output, lineterminator='\n')
             writer.writerow(["name","color"])
             for ind, val in enumerate(players):
@@ -147,7 +147,7 @@ for tr in rows:
                     val = 'H. Sedin '    
                 else:
                     val = val.split(' ',1)[1]
-                print(val.encode("utf-8"))
+                # print(val.encode("utf-8"))
                 writer.writerow([val.encode("utf-8"), ind])  
     except:
         print(tr)

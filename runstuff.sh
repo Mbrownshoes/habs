@@ -2,7 +2,8 @@
 cd /projects/habs
 
 
-python load_data.py
+"#python load_data.py"
+touch readme.md
 
 git commit -am'updated yesterdays games'
 

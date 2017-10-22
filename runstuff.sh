@@ -7,4 +7,4 @@ touch readme.md
 
 git commit -am'updated yesterdays games'
 
-git push orign gh-pages
+git push origin gh-pages

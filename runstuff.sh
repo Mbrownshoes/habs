@@ -1,2 +1,8 @@
 #!/bin/sh
-python python_script.py
+cd /projects/habs
+
+python load_data.py
+
+git commit -am'updated yesterdays games'
+
+git push orign gh-pages

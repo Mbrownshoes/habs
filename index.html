@@ -535,7 +535,7 @@ document.getElementById("title").innerHTML = $('.teams').val();
 
         // updateChords( "Arizona_matrix.json" );
 
-        d3.csv(team_name+"_players2017.csv", function(error, playerData) {
+        d3.csv(team_name+"_players"+year+".csv", function(error, playerData) {
 
     if (error) {alert("Error reading file: ", error.statusText); return; }
     
@@ -545,7 +545,7 @@ document.getElementById("title").innerHTML = $('.teams').val();
 
   // players = d3.csv.parse(d3.select("#players").text());    //instead of d3.csv
 
-    updateChords(team_name+"_matrix2017.json"); 
+    updateChords(team_name+"_matrix"+year+".json"); 
     // call the update method with the default dataset
     
 } ); //end of d3.csv function

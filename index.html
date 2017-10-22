@@ -29,14 +29,29 @@ path.chord {
   display: none;
 }
 
+     #tooltip {
+        color: white;
+        opacity: .9;
+        background: #333;
+        padding: 5px;
+        border: 1px solid lightgrey;
+        border-radius: 5px;
+        position: absolute;
+        z-index: 10;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
 </style>
 
 <body>
+    <div id="tooltip"></div>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="underscore.js"></script>
 <h1>NHL: Player Chemistry </h1>
 <h2>Analytics even Bruins fans can understand</h2>
-<p>This chart show which players have the best offensive chemistry. Hover over to display the goal production between two players. A thicker line indicates more goals. A line that is thicker at one end indicates that player scores more of the goals when those two connect.<b> 2014-2015 regular season</b></p>
+<p>This chart displays the goal production between two players. A thicker line indicates more goals.<b> 2017-2018 regular season. Updates daily.</b></p>
 
 <select class="teams">
   <option  value="Anaheim">Anaheim</option>
@@ -81,7 +96,10 @@ var width = 800,
     outerRadius = Math.min(width, height) / 2 - 100,
     innerRadius = outerRadius - 18;
 
-var dataset = "Montreal_matrix.json";
+var year = 2018
+
+var dataset = "Montreal_matrix"+year+".json";
+matrix = dataset
 //string url for the initial data set
 //would usually be a file path url, here it is the id
 //selector for the <pre> element storing the data
@@ -141,11 +159,12 @@ g.append("circle")
 //no callbacks required.
 
 
-d3.csv("Montreal_players.csv", function(error, playerData) {
+d3.csv("Montreal_players"+year+".csv", function(error, playerData) {
 
     if (error) {alert("Error reading file: ", error.statusText); return; }
     
     players = playerData; 
+    mmap = players;
         //store in variable accessible by other functions
         
 
@@ -216,7 +235,7 @@ function updateChords( datasetURL ) {
             //even if groups are sorted
         })
         .style("fill", function(d, i) { 
-            console.log(d.index)
+            // console.log(d.index)
             return color(i)
         });
     
@@ -278,39 +297,97 @@ function updateChords( datasetURL ) {
         .append("path")
         .attr("class", "chord");
     
-    // Add title tooltip for each new chord.
-    newChords.append("title");
-    
+
+
+  //*******************************************************************
+//  CHORD READER
+//*******************************************************************
+function chordRdr (matrix, mmap) {
+  return function (d) {
+    // console.log(d)
+    var i,j,s,t,g,m = {};
+    if (d.source) {
+      i = d.source.index; j = d.target.index;
+      // console.log(i,j)
+      // console.log(_.where(mmap, {key: i }))
+      t = mmap[i]
+      s = mmap[j]
+      // console.log(s.name, t)
+      m.sname = s.name;
+      m.sdata = d.source.value;
+      m.svalue = +d.source.value;
+      m.stotal = _.reduce(matrix[i], function (k, n) { return k + n }, 0);
+      m.tname = t.name;
+      m.tdata = d.target.value;
+      m.tvalue = +d.target.value;
+      m.ttotal = _.reduce(matrix[j], function (k, n) { return k + n }, 0);
+    } else {
+      g = _.where(mmap, {id: d.index });
+      m.gname = g[0].name;
+      m.gdata = g[0].data;
+      m.gvalue = d.value;
+    }
+    m.mtotal = _.reduce(matrix, function (m1, n1) { 
+      return m1 + _.reduce(n1, function (m2, n2) { return m2 + n2}, 0);
+    }, 0);
+    return m;
+  }
+}
 
     // // Update all group title texts
     // groupG.select("text")
     
+    // Add title tooltip for each new chord.
+    chordPaths.on("mouseover", function (d) {
+                  d3.select("#tooltip")
+                    .style("visibility", "visible")
+                    .html(chordTip(rdr(d)))
+                    .style("top", function () { return (d3.event.pageY - 130)+"px"})
+                    .style("left", function () { return (d3.event.pageX - 100)+"px";})
+                })
+                .on("mouseout", function (d) { d3.select("#tooltip").style("visibility", "hidden") });
 
+     function chordTip (d) {
+        // console.log(d)
+            var p = d3.format(".1%"), q = d3.format(",f")
+            return d.sname + q(d.svalue) +" assists on " + d.tname +" goals"
+              + "<br/>"
+              // + p(d.svalue/d.ttotal) + " of " + d.tname + "'s Total (" + q(d.ttotal) + ")<br/>"
+              // + p(d.svalue/(d.mtotal/2)) + " of Matrix Total (" + q(d.mtotal/2) + ")<br/>"
+              + "<br/>"
+              + d.tname + q(d.tvalue) +" assists on " +  d.sname+" goals"
+              +  "<br/>"
+              // + p(d.tvalue/d.ttotal) + " of " + d.tname + "'s Total (" + q(d.ttotal) + ")<br/>"
+              // + p(d.tvalue/(d.mtotal/2)) + " of Matrix Total (" + q(d.mtotal/2) + ")";
+    }
+
+            var rdr = chordRdr(dataset, players);
+        // chord =layout
     // Update all chord title texts
-    chordPaths.select("title")
-        .text(function(d) {
-            if (players[d.target.index].name !== players[d.source.index].name) {
-                return [players[d.target.index].name,
-                        " → ",
-                        players[d.source.index].name,
-                        " : ",
-                        numberWithCommas(d.source.value),
-                        "\n",
-                        players[d.source.index].name,
-                        " → ",
-                        players[d.target.index].name,
-                        " : ",
-                        numberWithCommas(d.target.value)].join(""); 
-                    //joining an array of many strings is faster than
-                    //repeated calls to the '+' operator, 
-                    //and makes for neater code!
-            } 
-            else { //source and target are the same
-                return numberWithCommas(d.source.value) 
-                    + " trips started and ended in " 
-                    + players[d.source.index].name;
-            }
-        });
+    // chordPaths.select("title")
+    //     .text(function(d) {
+    //         if (players[d.target.index].name !== players[d.source.index].name) {
+    //             return [players[d.target.index].name,
+    //                     " → ",
+    //                     players[d.source.index].name,
+    //                     " : ",
+    //                     numberWithCommas(d.source.value),
+    //                     "\n",
+    //                     players[d.source.index].name,
+    //                     " → ",
+    //                     players[d.target.index].name,
+    //                     " : ",
+    //                     numberWithCommas(d.target.value)].join(""); 
+    //                 //joining an array of many strings is faster than
+    //                 //repeated calls to the '+' operator, 
+    //                 //and makes for neater code!
+    //         } 
+    //         else { //source and target are the same
+    //             return numberWithCommas(d.source.value) 
+    //                 + " trips started and ended in " 
+    //                 + players[d.source.index].name;
+    //         }
+    //     });
 
     //handle exiting paths:
     chordPaths.exit().transition()
@@ -454,11 +531,11 @@ $(document).ready(function(){
     $('.teams').on('change',function(){
         team_name = $('.teams').val();
 document.getElementById("title").innerHTML = $('.teams').val();
-        console.log(team_name)
+        // console.log(team_name)
 
         // updateChords( "Arizona_matrix.json" );
 
-        d3.csv(team_name+"_players.csv", function(error, playerData) {
+        d3.csv(team_name+"_players"+year+".csv", function(error, playerData) {
 
     if (error) {alert("Error reading file: ", error.statusText); return; }
     
@@ -468,7 +545,7 @@ document.getElementById("title").innerHTML = $('.teams').val();
 
   // players = d3.csv.parse(d3.select("#players").text());    //instead of d3.csv
 
-    updateChords(team_name+"_matrix.json"); 
+    updateChords(team_name+"_matrix"+year+".json"); 
     // call the update method with the default dataset
     
 } ); //end of d3.csv function

@@ -2,8 +2,10 @@
 cd /projects/habs
 
 
-python load_data.py
+"#python load_data.py"
+touch readme.md
 
+git add .
 git commit -am'updated yesterdays games'
 
-git push orign gh-pages
+git push origin gh-pages

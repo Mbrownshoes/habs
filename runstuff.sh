@@ -1,6 +1,7 @@
 #!/bin/sh
-cd /projects/habs
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
 
+touch xxx.txt
 
 python projects/habs/load_data.py
 

@@ -121,7 +121,7 @@ for tr in rows:
             #get players who assisted on Patches goals
             # print(players[i])
     
-    
+            print(players)
             x=assists[players[i]]
             # print(x)
             for j in range(0, len(x)):  

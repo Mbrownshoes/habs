@@ -69,7 +69,7 @@ path.chord {
   <option  value="Florida">Florida</option>
   <option  value="Los Angeles">Los Angeles</option>
   <option  value="Minnesota">Minnesota</option>
-  <option  value="Montreal"  >Montreal</option>
+  <option  value="Montreal"  selected="selected">Montreal</option>
   <option  value="Nashville">Nashville</option>
   <option  value="New Jersey">New Jersey</option>
   <option  value="NY Rangers">NY Rangers</option>
@@ -79,7 +79,7 @@ path.chord {
   <option  value="Pittsburgh">Pittsburgh</option>
   <option  value="San Jose">San Jose</option>
   <option  value="St. Louis">St. Louis</option>
-  <option  value="Tampa Bay" selected="selected">Tampa Bay</option>
+  <option  value="Tampa Bay" >Tampa Bay</option>
   <option  value="Toronto">Toronto</option>
   <option  value="Vancouver">Vancouver</option>
   <option  value="Vegas">Vegas</option>
@@ -98,7 +98,7 @@ var width = 800,
 var test
 var year = 2018
 
-var dataset = "Tampa Bay_matrix" + year + ".json";
+var dataset = "Montreal_matrix" + year + ".json";
 //string url for the initial data set
 //would usually be a file path url, here it is the id
 //selector for the <pre> element storing the data
@@ -165,7 +165,7 @@ g.append("circle")
 //no callbacks required.
 
 
-d3.csv("Tampa Bay_players" + year + ".csv", function(error, playerData) {
+d3.csv("Montreal_players" + year + ".csv", function(error, playerData) {
     if (error) {
         alert("Error reading file: ", error.statusText);
         return;
@@ -180,12 +180,8 @@ d3.csv("Tampa Bay_players" + year + ".csv", function(error, playerData) {
 
     players = playerData;
     mmap = players;
-    // console.log(mmap)
     //store in variable accessible by other functions
 
-
-    // players = d3.csv.parse(d3.select("#players").text());    //instead of d3.csv
-    // color.domain([0, 12])
 
     updateChords(dataset);
     // call the update method with the default dataset
@@ -232,65 +228,78 @@ function updateChords(datasetURL) {
 
         var newGroups = groupG.enter().append("g")
             .attr("class", "group");
-            console.log(newGroups)
+            // console.log(newGroups)
         //the enter selection is stored in a variable so we can
         //enter the <path>, <text>, and <title> elements as well
 
 
-        //Create the title tooltip for the new groups
-        newGroups.append("title");
+
 
 
         //create the arc paths and set the constant attributes
         //(those based on the group index, not on the value)
-        //                 color.domain([1,d3.max(newGroups[0],function(d){
-        //                     console.log(d)
-
-        //     return (d['__data__'].source.value+d['__data__'].target.value)
-        // })])    
+    
         test = newGroups
 
         // console.log(d3.max(newGroups[0],function(d){
         //     return d['__data__'].value
         // }))
-        console.log(groupG)
-        color1.domain([1, d3.max(groupG[0], function(d) {
-            return d['__data__'].value
+        console.log(players)
+        console.log(d3.max(players, function(d) {
+            return +d.points
+        }))
+        color1.domain([1, d3.max(players, function(d) {
+            return +d.points
         })])
 
 
         newGroups.append("path")
+        //     .attr('class','ends')
             .attr("id", function(d) {
                 return "group" + d.index;
                 //using d.index and not i to maintain consistency
                 //even if groups are sorted
             })
-            .style("fill", function(d, i) {
-                console.log(d)
-                //this is the outter circle bar. Could represent goals
-                console.log(color1(d.value))
-                return color(d.value)
-            });
-console.log(groupG)
+        //     .style("fill", function(d, i) {
+        //         // console.log(d)
+        //         //this is the outter circle bar. Could represent goals
+        //         // console.log(color1(d.value))
+        //         return color1(d.value)
+        //     });
+    console.log(groupG)
     
 
-        //update the paths to match the layout
+
+
+        // newGroups
+        //     .attr("id", function(d) {
+        //         return "group" + d.index;
+        //         //using d.index and not i to maintain consistency
+        //         //even if groups are sorted
+        //     })
+            // .style("fill", function(d, i) {
+            //     // console.log(d)
+            //     //this is the outter circle bar. Could represent goals
+            //     // console.log(color1(d.value))
+            //     return color1(d.value)
+            // });
+
+                //update the paths to match the layout
         groupG.select("path")
             .transition()
             .duration(1500)
             // .attr("opacity", 0.5) //optional, just to observe the transition
             .attrTween("d", arcTween(last_layout))
-            .transition().duration(100).attr("opacity", 1) //reset opacity
+            .transition().duration(100).attr("opacity", 1)
+            .style("fill", function(d, i) {
+                console.log(players)
+                console.log(i)
+                //this is the outter circle bar. Could represent goals
+                // console.log(color1(d.value))
+                return color1(+players[i].points)
+            })
+             //reset opacity
         ;
-        // newGroups.select("path")
-        //     .transition()
-        //     .duration(1500)
-        //     .style("fill", function(d, i) {
-        //         console.log(d)
-        //         //this is the outter circle bar. Could represent goals
-        //         console.log(color1(d.value))
-        //         return color1(d.value)
-        //     });
 
         //create the group labels
         groupG.select("text").text(function(d) {
@@ -331,7 +340,7 @@ console.log(groupG)
 
 
         /* Create/update the chord paths */
-
+console.log(chordKey)
         var chordPaths = g.selectAll("path.chord")
             .data(layout.chords(), chordKey);
         // test =chordPaths    

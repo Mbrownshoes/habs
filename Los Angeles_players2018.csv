@@ -1,18 +1,19 @@
-name,color
-Kopitar ,0
-Brown ,1
-Kempe ,2
-Doughty ,3
-Muzzin ,4
-Toffoli ,5
-Lewis ,6
+name,points
+Kopitar ,15
+Brown ,13
+Toffoli ,10
+Kempe ,10
+Muzzin ,10
+Doughty ,9
+Lewis ,7
 Cammalleri ,7
-Pearson ,8
-Fantenberg ,9
-Forbort ,10
-Martinez ,11
-Carter ,12
-Iafallo ,13
-Shore ,14
-MacDermid ,15
-Clifford ,16
+Pearson ,7
+Fantenberg ,4
+Forbort ,4
+Martinez ,3
+Shore ,3
+Carter ,3
+Iafallo ,3
+Amadio ,1
+MacDermid ,1
+Clifford ,1

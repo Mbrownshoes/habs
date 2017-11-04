@@ -57,7 +57,8 @@ for tr in rows:
     
         # start building dict of each players assists
         master_list = {}
-        players_list=[]
+        points_list ={}
+     
     
         # Load each player's page html
         for x in range (0, len(all)):
@@ -101,6 +102,7 @@ for tr in rows:
     
                 #add players list to master dictionary
                 master_list[player] = assists
+                points_list[player] = points_season
             
     
         json.dump(master_list, open(team_name + '_player_data.json', 'w')) #goal scorer:[players who assisted on his goals]
@@ -133,13 +135,12 @@ for tr in rows:
                     pass
     
             matrix.append(current)
-        print(matrix)
     
         json.dump(matrix, open(team_name + '_matrix'+season+'.json', 'w'))
     
         with open(team_name + '_players'+season+'.csv', "w") as output:
             writer = csv.writer(output, lineterminator='\n')
-            writer.writerow(["name","color"])
+            writer.writerow(["name","points"])
             for ind, val in enumerate(players):
                 # save just the last names
                 if val == 'Daniel Sedin ':
@@ -147,8 +148,7 @@ for tr in rows:
                 elif val == 'Henrik Sedin ':
                     val = 'H. Sedin '    
                 else:
-                    val = val.split(' ',1)[1]
-                # print(val.encode("utf-8"))
-                writer.writerow([val, ind])  
+                    val1 = val.split(' ',1)[1]
+                writer.writerow([val1, points_list[val]])  
     except:
         print(tr)

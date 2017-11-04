@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name,points
 Forsberg ,13
 Subban ,10
@@ -20,3 +21,27 @@ Irwin ,1
 McLeod ,1
 Rinne ,1
 Weber ,1
+=======
+name,color
+Watson ,0
+Emelin ,1
+Ekholm ,2
+Fiala ,3
+McLeod ,4
+Smith ,5
+Weber ,6
+Hartnell ,7
+Aberg ,8
+Johansen ,9
+Jarnkrok ,10
+Sissons ,11
+Forsberg ,12
+Bonino ,13
+Rinne ,14
+Gaudreau ,15
+Irwin ,16
+Josi ,17
+Girard ,18
+Subban ,19
+Arvidsson ,20
+>>>>>>> b83506901999fb0181fdc0c4eb7888cdc95b32c5

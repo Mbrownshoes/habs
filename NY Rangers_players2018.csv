@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name,points
 Zibanejad ,14
 Miller ,11
@@ -18,3 +19,25 @@ Nieves ,3
 Smith ,2
 DeAngelo ,1
 Lundqvist ,1
+=======
+name,color
+Zuccarello ,0
+Skjei ,1
+Nieves ,2
+Grabner ,3
+Buchnevich ,4
+DeAngelo ,5
+Shattenkirk ,6
+McDonagh ,7
+Zibanejad ,8
+Staal ,9
+Miller ,10
+Vesey ,11
+Kreider ,12
+Nash ,13
+Hayes ,14
+Desharnais ,15
+Smith ,16
+Lundqvist ,17
+Fast ,18
+>>>>>>> b83506901999fb0181fdc0c4eb7888cdc95b32c5

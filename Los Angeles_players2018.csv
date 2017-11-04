@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name,points
 Kopitar ,15
 Brown ,13
@@ -17,3 +18,24 @@ Iafallo ,3
 Amadio ,1
 MacDermid ,1
 Clifford ,1
+=======
+name,color
+Forbort ,0
+Fantenberg ,1
+Kopitar ,2
+Clifford ,3
+Muzzin ,4
+Doughty ,5
+Pearson ,6
+MacDermid ,7
+Kempe ,8
+Martinez ,9
+Lewis ,10
+Carter ,11
+Cammalleri ,12
+Iafallo ,13
+Brown ,14
+Shore ,15
+Amadio ,16
+Toffoli ,17
+>>>>>>> b83506901999fb0181fdc0c4eb7888cdc95b32c5

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name,points
 Rantanen ,11
 MacKinnon ,10
@@ -19,3 +20,26 @@ Zadorov ,2
 Wilson ,2
 Bigras ,1
 Greer ,1
+=======
+name,color
+Landeskog ,0
+Kerfoot ,1
+Nemeth ,2
+Comeau ,3
+Soderberg ,4
+Rantanen ,5
+Nieto ,6
+Barberio ,7
+Andrighetto ,8
+Barrie ,9
+MacKinnon ,10
+Grimaldi ,11
+Duchene ,12
+Bigras ,13
+Yakupov ,14
+Johnson ,15
+Zadorov ,16
+Jost ,17
+Wilson ,18
+Greer ,19
+>>>>>>> b83506901999fb0181fdc0c4eb7888cdc95b32c5

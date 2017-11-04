@@ -10,7 +10,30 @@
  
 <link rel="stylesheet" href="main.css">  </head>
 <style>
+.select-style {
+    border: 1px solid #ccc;
+    width: 120px;
+    border-radius: 3px;
+    overflow: hidden;
+    background: #fafafa ;
+}
 
+.select-style select {
+    padding: 5px 8px;
+    width: 130%;
+    border: none;
+    font-size: 1em;
+    box-shadow: none;
+    text-align-last: center;
+    padding-right: 40px;
+    background: transparent;
+    background-image: none;
+    -webkit-appearance: none;
+}
+
+.select-style select:focus {
+    outline: none;
+}
 #circle circle {
   fill: none;
   pointer-events: all;
@@ -48,10 +71,14 @@ path.chord {
     <div id="tooltip"></div>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/1.13.0/d3-legend.js"></script>
 <script src="underscore.js"></script>
-<h1>NHL: Player Chemistry </h1>
+
+
+<h1>NHL Buddy-Buddy Chart</h1>
 <h2>Analytics even Bruins fans can understand</h2>
 <p>This chart displays the goal production between two players. A thicker line indicates more goals.<b> 2017-2018 regular season. Updates daily.</b></p>
+<div class="select-style">
 
 <select class="teams">
   <option  value="Anaheim">Anaheim</option>
@@ -88,8 +115,10 @@ path.chord {
   <option  value="Winnipeg">Winnipeg</option>
   
 </select>
-<div><h2 id="title">Montreal</h2>
+</div>
+<div>
 <div id="chart_placeholder"></div>
+<svg></svg>
 <script>
 /*** Define parameters and tools ***/
 var width = 800,
@@ -128,6 +157,7 @@ var color1 = d3.scale.quantize()
     .range(['#fff5f0', '#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a', '#ef3b2c', '#cb181d', '#a50f15', '#67000d'])
 
 
+
 //define the default chord layout parameters
 //within a function that returns a new layout object;
 //that way, you can create multiple chord layouts
@@ -164,6 +194,28 @@ g.append("circle")
 //instead we're using the string-parsing functions
 //d3.csv.parse and JSON.parse, both of which return the data,
 //no callbacks required.
+var svg = d3.select("svg")
+var quantize = d3.scale.quantize()
+  // .domain([0,28])
+  .range(['#fff5f0', '#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a', '#ef3b2c', '#cb181d', '#a50f15', '#67000d']);
+
+var svg = d3.select("svg");
+
+svg.append("g")
+  .attr("class", "legendLinear")
+  // .attr("transform", "translate(20,20)");
+
+var legendquantize = d3.legend.color()
+  .shapeWidth(10)
+  .labels(["least", " ", " ", " "," ", " ", " ", " ", "most"])
+  .orient('horizontal')
+  .title("Player points")
+  .scale(quantize);
+
+svg.select(".legendLinear")
+.attr('transform', 'translate(660,20)')
+  .call(legendquantize);
+          
 
 
 d3.csv("Montreal_players" + year + ".csv", function(error, playerData) {
@@ -600,12 +652,12 @@ function chordTween(oldLayout) {
     };
 }
 
- 
+
 
 $(document).ready(function() {
     $('.teams').on('change', function() {
         team_name = $('.teams').val();
-        document.getElementById("title").innerHTML = $('.teams').val();
+        // document.getElementById("title").innerHTML = $('.teams').val();
         // console.log(team_name)
 
         // updateChords( "Arizona_matrix.json" );
@@ -632,6 +684,8 @@ $(document).ready(function() {
     });
 
 });
+
+
 </script>
 
 

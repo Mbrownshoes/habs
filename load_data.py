@@ -11,7 +11,7 @@ table=masterPage.find("table")
 rows = table.findAll('tr', {'class':'full_table'})
 season = '2018'
 # loop through teams
-
+ 
 for tr in rows:
 #    print "TR: "
     # print(type(tr))

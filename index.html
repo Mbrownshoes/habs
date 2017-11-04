@@ -17,7 +17,7 @@
 }
 
 .group path {
-  fill-opacity: .5;
+  /*fill-opacity: .5;*/
 }
 
 path.chord {
@@ -69,7 +69,7 @@ path.chord {
   <option  value="Florida">Florida</option>
   <option  value="Los Angeles">Los Angeles</option>
   <option  value="Minnesota">Minnesota</option>
-  <option  value="Montreal" selected="selected" >Montreal</option>
+  <option  value="Montreal"  >Montreal</option>
   <option  value="Nashville">Nashville</option>
   <option  value="New Jersey">New Jersey</option>
   <option  value="NY Rangers">NY Rangers</option>
@@ -79,9 +79,10 @@ path.chord {
   <option  value="Pittsburgh">Pittsburgh</option>
   <option  value="San Jose">San Jose</option>
   <option  value="St. Louis">St. Louis</option>
-  <option  value="Tampa Bay">Tampa Bay</option>
+  <option  value="Tampa Bay" selected="selected">Tampa Bay</option>
   <option  value="Toronto">Toronto</option>
   <option  value="Vancouver">Vancouver</option>
+  <option  value="Vegas">Vegas</option>
   <option  value="Washington">Washington</option>
   <option  value="Winnipeg">Winnipeg</option>
   
@@ -89,17 +90,15 @@ path.chord {
 <div><h2 id="title">Montreal</h2>
 <div id="chart_placeholder"></div>
 <script>
-
 /*** Define parameters and tools ***/
 var width = 800,
     height = 800,
     outerRadius = Math.min(width, height) / 2 - 100,
     innerRadius = outerRadius - 18;
-
+var test
 var year = 2018
 
-var dataset = "Montreal_matrix"+year+".json";
-matrix = dataset
+var dataset = "Tampa Bay_matrix" + year + ".json";
 //string url for the initial data set
 //would usually be a file path url, here it is the id
 //selector for the <pre> element storing the data
@@ -118,8 +117,15 @@ var path = d3.svg.chord()
     .radius(innerRadius);
 
 
-var color = d3.scale.ordinal()
-      .range(['#a50026','rgb(178,24,43)','rgb(214,96,77)','#4575b4','rgb(209,229,240)','rgb(146,197,222)','rgb(67,147,195)','rgb(33,102,172)','rgb(5,48,97)']);
+var color = d3.scale.quantize()
+    // .domain([1,12])
+    .range(['#fff7fb', '#ece7f2', '#d0d1e6', '#a6bddb', '#74a9cf', '#3690c0', '#0570b0', '#045a8d', '#023858'])
+
+
+var color1 = d3.scale.quantize()
+    // .domain([1,12])
+    .range(['#fff5f0', '#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a', '#ef3b2c', '#cb181d', '#a50f15', '#67000d'])
+
 
 //define the default chord layout parameters
 //within a function that returns a new layout object;
@@ -127,21 +133,21 @@ var color = d3.scale.ordinal()
 //that are the same except for the data.
 function getDefaultLayout() {
     return d3.layout.chord()
-    .padding(0.03)
-    .sortSubgroups(d3.descending)
-    .sortChords(d3.ascending);
-}  
+        .padding(0.03)
+        .sortSubgroups(d3.descending)
+        .sortChords(d3.ascending);
+}
 var last_layout; //store layout between updates
 var players; //store neighbourhood data outside data-reading function
-
+var assists; //
 /*** Initialize the visualization ***/
 var g = d3.select("#chart_placeholder").append("svg")
-        .attr("width", width)
-        .attr("height", height)
+    .attr("width", width)
+    .attr("height", height)
     .append("g")
-        .attr("id", "circle")
-        .attr("transform", 
-              "translate(" + width / 2 + "," + height / 2 + ")");
+    .attr("id", "circle")
+    .attr("transform",
+        "translate(" + width / 2 + "," + height / 2 + ")");
 //the entire graphic will be drawn within this <g> element,
 //so all coordinates will be relative to the center of the circle
 
@@ -159,366 +165,430 @@ g.append("circle")
 //no callbacks required.
 
 
-d3.csv("Montreal_players"+year+".csv", function(error, playerData) {
+d3.csv("Tampa Bay_players" + year + ".csv", function(error, playerData) {
+    if (error) {
+        alert("Error reading file: ", error.statusText);
+        return;
+    }
 
-    if (error) {alert("Error reading file: ", error.statusText); return; }
-    
-    players = playerData; 
+    // d3.csv("assistData.csv", function(error, assistsData){
+    //     // console.log(assistsData)
+    //     assists = assistsData;
+
+    // })
+
+
+    players = playerData;
     mmap = players;
-        //store in variable accessible by other functions
-        
+    // console.log(mmap)
+    //store in variable accessible by other functions
 
-  // players = d3.csv.parse(d3.select("#players").text());    //instead of d3.csv
-    color.domain([0, players.length])
 
-    updateChords(dataset); 
+    // players = d3.csv.parse(d3.select("#players").text());    //instead of d3.csv
+    // color.domain([0, 12])
+
+    updateChords(dataset);
     // call the update method with the default dataset
-    
-} ); //end of d3.csv function
+
+}); //end of d3.csv function
 
 
 /* Create OR update a chord layout from a data matrix */
-function updateChords( datasetURL ) {
-    
-    d3.json(datasetURL, function(error, matrix) {
+function updateChords(datasetURL) {
 
-    if (error) {alert("Error reading file: ", error.statusText); return; }
-    
-    
-    // var matrix = JSON.parse( d3.select(datasetURL).text() );
+    d3.json(datasetURL, function(error, matrix) {
+        // console.log(matrix)
+        if (error) {
+            alert("Error reading file: ", error.statusText);
+            return;
+        }
+
+
+        // var matrix = JSON.parse( d3.select(datasetURL).text() );
         // instead of d3.json
-    
-    /* Compute chord layout. */
-    layout = getDefaultLayout(); //create a new layout object
-    layout.matrix(matrix);
- 
-    /* Create/update "group" elements */
-    var groupG = g.selectAll("g.group")
-        .data(layout.groups(), function (d) {
-            return d.index; 
-            //use a key function in case the 
-            //groups are sorted differently between updates
-        });
-    
-    groupG.exit()
-        .transition()
+
+        /* Compute chord layout. */
+        layout = getDefaultLayout(); //create a new layout object
+        layout.matrix(matrix);
+        // console.log(layout.groups())
+
+        /* Create/update "group" elements */
+        var groupG = g.selectAll("g.group")
+            .data(layout.groups(), function(d) {
+                // console.log(d)
+                return d.index;
+                //use a key function in case the 
+                //groups are sorted differently between updates
+            });
+
+        console.log(groupG[0])
+
+        groupG.exit()
+            .transition()
             .duration(1500)
             .attr("opacity", 0)
             .remove(); //remove after transitions are complete
-    
-    var newGroups = groupG.enter().append("g")
-        .attr("class", "group");
-    //the enter selection is stored in a variable so we can
-    //enter the <path>, <text>, and <title> elements as well
 
-    
-    //Create the title tooltip for the new groups
-    newGroups.append("title");
 
-    
-    
-    //Update the (tooltip) title text based on the data
-    // groupG.select("title")
-    //     .text(function(d, i) {
-    //         return numberWithCommas(d.value) 
-    //             + " trips started in " 
-    //             + players[i].name;
-                
-    //     });
+        var newGroups = groupG.enter().append("g")
+            .attr("class", "group");
+            console.log(newGroups)
+        //the enter selection is stored in a variable so we can
+        //enter the <path>, <text>, and <title> elements as well
 
-    //create the arc paths and set the constant attributes
-    //(those based on the group index, not on the value)
-    newGroups.append("path")
-        .attr("id", function (d) {
-            return "group" + d.index;
-            //using d.index and not i to maintain consistency
-            //even if groups are sorted
-        })
-        .style("fill", function(d, i) { 
-            // console.log(d.index)
-            return color(i)
-        });
+
+        //Create the title tooltip for the new groups
+        newGroups.append("title");
+
+
+        //create the arc paths and set the constant attributes
+        //(those based on the group index, not on the value)
+        //                 color.domain([1,d3.max(newGroups[0],function(d){
+        //                     console.log(d)
+
+        //     return (d['__data__'].source.value+d['__data__'].target.value)
+        // })])    
+        test = newGroups
+
+        // console.log(d3.max(newGroups[0],function(d){
+        //     return d['__data__'].value
+        // }))
+        console.log(groupG)
+        color1.domain([1, d3.max(groupG[0], function(d) {
+            return d['__data__'].value
+        })])
+
+
+        newGroups.append("path")
+            .attr("id", function(d) {
+                return "group" + d.index;
+                //using d.index and not i to maintain consistency
+                //even if groups are sorted
+            })
+            .style("fill", function(d, i) {
+                console.log(d)
+                //this is the outter circle bar. Could represent goals
+                console.log(color1(d.value))
+                return color(d.value)
+            });
+console.log(groupG)
     
-    //update the paths to match the layout
-    groupG.select("path") 
-        .transition()
+
+        //update the paths to match the layout
+        groupG.select("path")
+            .transition()
             .duration(1500)
-            .attr("opacity", 0.5) //optional, just to observe the transition
-        .attrTween("d", arcTween( last_layout ))
+            // .attr("opacity", 0.5) //optional, just to observe the transition
+            .attrTween("d", arcTween(last_layout))
             .transition().duration(100).attr("opacity", 1) //reset opacity
         ;
-    
-    //create the group labels
-    groupG.select("text").text(function (d) {
-                return players[d.index].name;
-            }); 
+        // newGroups.select("path")
+        //     .transition()
+        //     .duration(1500)
+        //     .style("fill", function(d, i) {
+        //         console.log(d)
+        //         //this is the outter circle bar. Could represent goals
+        //         console.log(color1(d.value))
+        //         return color1(d.value)
+        //     });
 
-    newGroups.append("svg:text")
-        .transition()
-        .attr("xlink:href", function (d) {
-            return "#group" + d.index;
-        })
-        .attr("dy", ".35em")
-        .attr("color", "#fff")
-        .attr("class",'players')
-        .text(function (d) {
+        //create the group labels
+        groupG.select("text").text(function(d) {
             return players[d.index].name;
         });
-     
-        
-    //position group labels to match layout
-    groupG.select("text")
-        .transition()
+        // console.log(newGroups)
+
+        newGroups.append("svg:text")
+            .transition()
+            .attr("xlink:href", function(d) {
+                return "#group" + d.index;
+            })
+            .attr("dy", ".35em")
+            .attr("color", "#fff")
+            .attr("class", 'players')
+            .text(function(d) {
+                return players[d.index].name;
+            });
+
+
+
+        //position group labels to match layout
+        groupG.select("text")
+            .transition()
             .duration(1500)
             .attr("transform", function(d) {
                 d.angle = (d.startAngle + d.endAngle) / 2;
                 //store the midpoint angle in the data object
-                
+
                 return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")" +
-                    " translate(" + (innerRadius + 26) + ")" + 
-                    (d.angle > Math.PI ? " rotate(180)" : " rotate(0)"); 
+                    " translate(" + (innerRadius + 26) + ")" +
+                    (d.angle > Math.PI ? " rotate(180)" : " rotate(0)");
                 //include the rotate zero so that transforms can be interpolated
             })
-            .attr("text-anchor", function (d) {
+            .attr("text-anchor", function(d) {
                 return d.angle > Math.PI ? "end" : "begin";
             });
-    
-
-    
-    /* Create/update the chord paths */
-    var chordPaths = g.selectAll("path.chord")
-        .data(layout.chords(), chordKey );
-            //specify a key function to match chords
-            //between updates
-        
-    
-    //create the new chord paths
-    var newChords = chordPaths.enter()
-        .append("path")
-        .attr("class", "chord");
-    
 
 
-  //*******************************************************************
-//  CHORD READER
-//*******************************************************************
-function chordRdr (matrix, mmap) {
-  return function (d) {
-    // console.log(d)
-    var i,j,s,t,g,m = {};
-    if (d.source) {
-      i = d.source.index; j = d.target.index;
-      // console.log(i,j)
-      // console.log(_.where(mmap, {key: i }))
-      t = mmap[i]
-      s = mmap[j]
-      // console.log(s.name, t)
-      m.sname = s.name;
-      m.sdata = d.source.value;
-      m.svalue = +d.source.value;
-      m.stotal = _.reduce(matrix[i], function (k, n) { return k + n }, 0);
-      m.tname = t.name;
-      m.tdata = d.target.value;
-      m.tvalue = +d.target.value;
-      m.ttotal = _.reduce(matrix[j], function (k, n) { return k + n }, 0);
-    } else {
-      g = _.where(mmap, {id: d.index });
-      m.gname = g[0].name;
-      m.gdata = g[0].data;
-      m.gvalue = d.value;
-    }
-    m.mtotal = _.reduce(matrix, function (m1, n1) { 
-      return m1 + _.reduce(n1, function (m2, n2) { return m2 + n2}, 0);
-    }, 0);
-    return m;
-  }
-}
+        /* Create/update the chord paths */
 
-    // // Update all group title texts
-    // groupG.select("text")
-    
-    // Add title tooltip for each new chord.
-    chordPaths.on("mouseover", function (d) {
-                  d3.select("#tooltip")
+        var chordPaths = g.selectAll("path.chord")
+            .data(layout.chords(), chordKey);
+        // test =chordPaths    
+
+
+        //specify a key function to match chords
+        //between updates
+
+
+        //create the new chord paths
+        var newChords = chordPaths.enter()
+            .append("path")
+            .attr("class", "chord");
+
+        //*******************************************************************
+        //  CHORD READER
+        //*******************************************************************
+        function chordRdr(matrix, mmap) {
+            return function(d) {
+                // console.log(d)
+                var i, j, s, t, g, m = {};
+                if (d.source) {
+                    i = d.source.index;
+                    j = d.target.index;
+                    // console.log(i,j)
+                    // console.log(_.where(mmap, {key: i }))
+                    t = mmap[i]
+                    s = mmap[j]
+                    // console.log(s.name, t)
+                    m.sname = s.name;
+                    m.sdata = d.source.value;
+                    m.svalue = +d.source.value;
+                    m.stotal = _.reduce(matrix[i], function(k, n) {
+                        return k + n
+                    }, 0);
+                    m.tname = t.name;
+                    m.tdata = d.target.value;
+                    m.tvalue = +d.target.value;
+                    m.ttotal = _.reduce(matrix[j], function(k, n) {
+                        return k + n
+                    }, 0);
+                } else {
+                    g = _.where(mmap, {
+                        id: d.index
+                    });
+                    m.gname = g[0].name;
+                    m.gdata = g[0].data;
+                    m.gvalue = d.value;
+                }
+                m.mtotal = _.reduce(matrix, function(m1, n1) {
+                    return m1 + _.reduce(n1, function(m2, n2) {
+                        return m2 + n2
+                    }, 0);
+                }, 0);
+                return m;
+            }
+        }
+
+        // // Update all group title texts
+        // groupG.select("text")
+
+        // Add title tooltip for each new chord.
+        chordPaths.on("mouseover", function(d) {
+                d3.select("#tooltip")
                     .style("visibility", "visible")
                     .html(chordTip(rdr(d)))
-                    .style("top", function () { return (d3.event.pageY - 130)+"px"})
-                    .style("left", function () { return (d3.event.pageX - 100)+"px";})
-                })
-                .on("mouseout", function (d) { d3.select("#tooltip").style("visibility", "hidden") });
+                    .style("top", function() {
+                        return (d3.event.pageY - 130) + "px"
+                    })
+                    .style("left", function() {
+                        return (d3.event.pageX - 100) + "px";
+                    })
+            })
+            .on("mouseout", function(d) {
+                d3.select("#tooltip").style("visibility", "hidden")
+            });
 
-     function chordTip (d) {
-        // console.log(d)
-            var p = d3.format(".1%"), q = d3.format(",f")
-            return d.sname + q(d.svalue) +" assists on " + d.tname +" goals"
-              + "<br/>"
-              // + p(d.svalue/d.ttotal) + " of " + d.tname + "'s Total (" + q(d.ttotal) + ")<br/>"
-              // + p(d.svalue/(d.mtotal/2)) + " of Matrix Total (" + q(d.mtotal/2) + ")<br/>"
-              + "<br/>"
-              + d.tname + q(d.tvalue) +" assists on " +  d.sname+" goals"
-              +  "<br/>"
-              // + p(d.tvalue/d.ttotal) + " of " + d.tname + "'s Total (" + q(d.ttotal) + ")<br/>"
-              // + p(d.tvalue/(d.mtotal/2)) + " of Matrix Total (" + q(d.mtotal/2) + ")";
-    }
+        function chordTip(d) {
+            // console.log(d)
+            var p = d3.format(".1%"),
+                q = d3.format(",f")
+            return d.sname + q(d.svalue) + " assists on " + d.tname + " goals" +
+                "<br/>"
+                // + p(d.svalue/d.ttotal) + " of " + d.tname + "'s Total (" + q(d.ttotal) + ")<br/>"
+                // + p(d.svalue/(d.mtotal/2)) + " of Matrix Total (" + q(d.mtotal/2) + ")<br/>"
+                +
+                "<br/>" +
+                d.tname + q(d.tvalue) + " assists on " + d.sname + " goals" +
+                "<br/>"
+            // + p(d.tvalue/d.ttotal) + " of " + d.tname + "'s Total (" + q(d.ttotal) + ")<br/>"
+            // + p(d.tvalue/(d.mtotal/2)) + " of Matrix Total (" + q(d.mtotal/2) + ")";
+        }
 
-            var rdr = chordRdr(dataset, players);
-        // chord =layout
-    // Update all chord title texts
-    // chordPaths.select("title")
-    //     .text(function(d) {
-    //         if (players[d.target.index].name !== players[d.source.index].name) {
-    //             return [players[d.target.index].name,
-    //                     " → ",
-    //                     players[d.source.index].name,
-    //                     " : ",
-    //                     numberWithCommas(d.source.value),
-    //                     "\n",
-    //                     players[d.source.index].name,
-    //                     " → ",
-    //                     players[d.target.index].name,
-    //                     " : ",
-    //                     numberWithCommas(d.target.value)].join(""); 
-    //                 //joining an array of many strings is faster than
-    //                 //repeated calls to the '+' operator, 
-    //                 //and makes for neater code!
-    //         } 
-    //         else { //source and target are the same
-    //             return numberWithCommas(d.source.value) 
-    //                 + " trips started and ended in " 
-    //                 + players[d.source.index].name;
-    //         }
-    //     });
+        // console.log(dataset)
+        var rdr = chordRdr(dataset, players);
+        // console.log(d3.max(chordPaths[0],function(d){
 
-    //handle exiting paths:
-    chordPaths.exit().transition()
-        .duration(1500)
-        .attr("opacity", 0)
-        .remove();
+        //         return (d['__data__'].source.value+d['__data__'].target.value)
+        //     })
+        //     )
+        color.domain([1, d3.max(chordPaths[0], function(d) {
+            return (d['__data__'].source.value + d['__data__'].target.value)
+        })])
 
-    //update the path shape
-    chordPaths.transition()
-        .duration(1500)
-        .style("fill", function(d, i) { return color(i)
-        })
-        .attrTween("d", chordTween(last_layout))
-        .transition().duration(100).attr("opacity", 1) //reset opacity
-    ;
+        //handle exiting paths:
+        chordPaths.exit().transition()
+            .duration(1500)
+            .attr("opacity", 0)
+            .remove();
 
-    //add the mouseover/fade out behaviour to the groups
-    //this is reset on every update, so it will use the latest
-    //chordPaths selection
-    groupG.on("mouseover", function(d) {
-        chordPaths.classed("fade", function (p) {
-            //returns true if *neither* the source or target of the chord
-            //matches the group that has been moused-over
-            return ((p.source.index != d.index) && (p.target.index != d.index));
+        //update the path shape
+        // console.log(chordPaths)
+        chordPaths.transition()
+            .duration(1500)
+            .style("fill", function(d, i) {
+                //get source and target for assists data
+                i = d.source.index;
+                j = d.target.index;
+                t = mmap[i]
+                s = mmap[j]
+                // console.log(d)
+                // console.log(t)
+                //total combined assists for a pair
+                // combined=assists.filter(function(d) {
+                //     return ((d.playerG == s.name && d.playerA ==t.name) || (d.playerG == t.name && d.playerA ==s.name))
+
+                //    })
+                // console.log(d.source)
+                // console.log(d.target)
+                // console.log(d.source.value + d.target.value)
+                return color(d.source.value + d.target.value)
+            })
+            .attrTween("d", chordTween(last_layout))
+            .transition().duration(100).attr("opacity", 1) //reset opacity
+        ;
+
+        //add the mouseover/fade out behaviour to the groups
+        //this is reset on every update, so it will use the latest
+        //chordPaths selection
+        groupG.on("mouseover", function(d) {
+            chordPaths.classed("fade", function(p) {
+                //returns true if *neither* the source or target of the chord
+                //matches the group that has been moused-over
+                return ((p.source.index != d.index) && (p.target.index != d.index));
+            });
         });
-    });
-    //the "unfade" is handled with CSS :hover class on g#circle
-    //you could also do it using a mouseout event:
-    /*
-    g.on("mouseout", function() {
-        if (this == g.node() )
-            //only respond to mouseout of the entire circle
-            //not mouseout events for sub-components
-            chordPaths.classed("fade", false);
-    });
-    */
-    
-    last_layout = layout; //save for next update
-    
- }); //end of d3.json
+        //the "unfade" is handled with CSS :hover class on g#circle
+        //you could also do it using a mouseout event:
+        /*
+        g.on("mouseout", function() {
+            if (this == g.node() )
+                //only respond to mouseout of the entire circle
+                //not mouseout events for sub-components
+                chordPaths.classed("fade", false);
+        });
+        */
+
+        last_layout = layout; //save for next update
+
+    }); //end of d3.json
 }
 
 function arcTween(oldLayout) {
     //this function will be called once per update cycle
-    
+
     //Create a key:value version of the old layout's groups array
     //so we can easily find the matching group 
     //even if the group index values don't match the array index
     //(because of sorting)
     var oldGroups = {};
     if (oldLayout) {
-        oldLayout.groups().forEach( function(groupData) {
-            oldGroups[ groupData.index ] = groupData;
+        oldLayout.groups().forEach(function(groupData) {
+            oldGroups[groupData.index] = groupData;
         });
     }
-    
-    return function (d, i) {
+
+    return function(d, i) {
         var tween;
         var old = oldGroups[d.index];
         if (old) { //there's a matching old group
             tween = d3.interpolate(old, d);
-        }
-        else {
+        } else {
             //create a zero-width arc object
-            var emptyArc = {startAngle:d.startAngle,
-                            endAngle:d.startAngle};
+            var emptyArc = {
+                startAngle: d.startAngle,
+                endAngle: d.startAngle
+            };
             tween = d3.interpolate(emptyArc, d);
         }
-        
-        return function (t) {
-            return arc( tween(t) );
+
+        return function(t) {
+            return arc(tween(t));
         };
     };
 }
 
 function chordKey(data) {
+
     return (data.source.index < data.target.index) ?
-        data.source.index  + "-" + data.target.index:
-        data.target.index  + "-" + data.source.index;
-    
+        data.source.index + "-" + data.target.index :
+        data.target.index + "-" + data.source.index;
+
     //create a key that will represent the relationship
     //between these two groups *regardless*
     //of which group is called 'source' and which 'target'
 }
+
 function chordTween(oldLayout) {
     //this function will be called once per update cycle
-    
+
     //Create a key:value version of the old layout's chords array
     //so we can easily find the matching chord 
     //(which may not have a matching index)
-    
+
     var oldChords = {};
-    
+
     if (oldLayout) {
-        oldLayout.chords().forEach( function(chordData) {
-            oldChords[ chordKey(chordData) ] = chordData;
+        oldLayout.chords().forEach(function(chordData) {
+            oldChords[chordKey(chordData)] = chordData;
         });
     }
-    
-    return function (d, i) {
+
+    return function(d, i) {
         //this function will be called for each active chord
-        
+
         var tween;
-        var old = oldChords[ chordKey(d) ];
+        var old = oldChords[chordKey(d)];
         if (old) {
             //old is not undefined, i.e.
             //there is a matching old chord value
-            
+
             //check whether source and target have been switched:
-            if (d.source.index != old.source.index ){
+            if (d.source.index != old.source.index) {
                 //swap source and target to match the new data
                 old = {
                     source: old.target,
                     target: old.source
                 };
             }
-            
+
             tween = d3.interpolate(old, d);
-        }
-        else {
+        } else {
             //create a zero-width chord object
             var emptyChord = {
-                source: { startAngle: d.source.startAngle,
-                         endAngle: d.source.startAngle},
-                target: { startAngle: d.target.startAngle,
-                         endAngle: d.target.startAngle}
+                source: {
+                    startAngle: d.source.startAngle,
+                    endAngle: d.source.startAngle
+                },
+                target: {
+                    startAngle: d.target.startAngle,
+                    endAngle: d.target.startAngle
+                }
             };
-            tween = d3.interpolate( emptyChord, d );
+            tween = d3.interpolate(emptyChord, d);
         }
 
-        return function (t) {
+        return function(t) {
             //this function calculates the intermediary shapes
             return path(tween(t));
         };
@@ -527,34 +597,36 @@ function chordTween(oldLayout) {
 
 
 
-$(document).ready(function(){
-    $('.teams').on('change',function(){
+$(document).ready(function() {
+    $('.teams').on('change', function() {
         team_name = $('.teams').val();
-document.getElementById("title").innerHTML = $('.teams').val();
+        document.getElementById("title").innerHTML = $('.teams').val();
         // console.log(team_name)
 
         // updateChords( "Arizona_matrix.json" );
 
-        d3.csv(team_name+"_players"+year+".csv", function(error, playerData) {
+        d3.csv(team_name + "_players" + year + ".csv", function(error, playerData) {
 
-    if (error) {alert("Error reading file: ", error.statusText); return; }
-    
-    players = playerData; 
-        //store in variable accessible by other functions
-        
+            if (error) {
+                alert("Error reading file: ", error.statusText);
+                return;
+            }
 
-  // players = d3.csv.parse(d3.select("#players").text());    //instead of d3.csv
+            players = playerData;
+            //store in variable accessible by other functions
 
-    updateChords(team_name+"_matrix"+year+".json"); 
-    // call the update method with the default dataset
-    
-} ); //end of d3.csv function
 
-        
-    }); 
-    
+            // players = d3.csv.parse(d3.select("#players").text());    //instead of d3.csv
+            dataset = team_name + "_matrix" + year + ".json"
+            updateChords(dataset);
+            // call the update method with the default dataset
+
+        }); //end of d3.csv function
+
+
     });
 
+});
 </script>
 
 

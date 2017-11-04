@@ -1,14 +1,14 @@
 
-
+setwd('/Users/mathewbrown/fun/habs')
 #' xml data
 
 #+ vWinnipeg
 library('XML')
 
-x=readHTMLTable('http://www.nhl.com/scores/htmlreports/20142015/TH020224.HTM',as.is=TRUE)
+# x=readHTMLTable('http://www.nhl.com/scores/htmlreports/20142015/TH020224.HTM',as.is=TRUE)
 
 library('RCurl')
-webpage <- getURL('http://www.nhl.com/scores/htmlreports/20142015/TH020224.HTM')
+webpage <- getURL('http://www.nhl.com/scores/htmlreports/20172018/TH010032.HTM')
 
 webpage <- readLines(tc <- textConnection(webpage)); close(tc)
 pagetree <- htmlTreeParse(webpage, error=function(...){},useInternalNodes=TRUE)
@@ -76,8 +76,7 @@ res$intervals = Intervals(cbind(
 #+ overlap
 Splayers = unique(as.character(res$player))
 allPairs = expand.grid(Splayers,Splayers)
-theLower = 
-    matrix(1:nrow(allPairs),ncol=length(Splayers))
+theLower =  matrix(1:nrow(allPairs),ncol=length(Splayers))
 theLower = theLower[lower.tri(theLower,diag=FALSE)]
 allPairs = allPairs[theLower,]
 
@@ -152,7 +151,7 @@ toi[1:10]
 
 #+ plotShifts, fig.cap='shifts'
 
-plotRanges(res,pairsIntervals,'eller','markov')
+plotRanges(res,pairsIntervals,'DROUIN','PRICE')
 #'
 
 

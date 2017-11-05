@@ -64,7 +64,24 @@ path.chord {
         visibility: hidden;
         pointer-events: none;
       }
+     .least {
+        stroke: #fff5f0;
+        fill: #fff5f0;
+     }
 
+     .most {
+        stroke: #67000d;
+        fill: #67000d;
+     }
+     .lowest {
+        stroke: #fff7fb;
+        fill: #fff7fb;
+     }
+
+     .highest {
+        stroke: #023858;
+        fill: #023858;
+     }
 </style>
 
 <body>
@@ -77,7 +94,11 @@ path.chord {
 
 <h1>NHL Buddy-Buddy Chart</h1>
 <h2>Analytics even Bruins fans can understand</h2>
-<p>This chart displays the goal production between two players. A thicker line indicates more goals.<b> 2017-2018 regular season. Updates daily.</b></p>
+<p>How to read this chart<p>
+<p>1. Chords show the goal production between players. Thicker the better the offensive chemistry. <br /> 
+2. Reds represent a player's total points. The darker the better.  <br /> 
+3. Blues highlight which players connect for the most goals. The darker the more offensively productive.<br /> 4. Arc length shows the number of goals by a player. The longer, the more goals. <p>
+<!-- <p>This chart displays the goal production between two players. A thicker line indicates more goals.<b> 2017-2018 regular season. Updates daily.</b></p> -->
 <div class="select-style">
 
 <select class="teams">
@@ -121,7 +142,7 @@ path.chord {
 <svg></svg>
 <script>
 /*** Define parameters and tools ***/
-var width = 800,
+var width = 960,
     height = 800,
     outerRadius = Math.min(width, height) / 2 - 100,
     innerRadius = outerRadius - 18;
@@ -194,28 +215,59 @@ g.append("circle")
 //instead we're using the string-parsing functions
 //d3.csv.parse and JSON.parse, both of which return the data,
 //no callbacks required.
-var svg = d3.select("svg")
-var quantize = d3.scale.quantize()
-  // .domain([0,28])
-  .range(['#fff5f0', '#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a', '#ef3b2c', '#cb181d', '#a50f15', '#67000d']);
+// var svg = d3.select("svg")
+// var quantize = d3.scale.quantize()
+//   // .domain([0,28])
+//   .range(['#fff5f0', '#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a', '#ef3b2c', '#cb181d', '#a50f15', '#67000d']);
 
 var svg = d3.select("svg");
 
-svg.append("g")
-  .attr("class", "legendLinear")
-  // .attr("transform", "translate(20,20)");
+// svg.append("g")
+//   .attr("class", "legendLinear")
+//   // .attr("transform", "translate(20,20)");
 
-var legendquantize = d3.legend.color()
-  .shapeWidth(10)
-  .labels(["least", " ", " ", " "," ", " ", " ", " ", "most"])
-  .orient('horizontal')
-  .title("Player points")
-  .scale(quantize);
+// var legendquantize = d3.legend.color()
+//   .shapeWidth(10)
+//   .labels(["least", " ", " ", " "," ", " ", " ", " ", "most"])
+//   .orient('horizontal')
+//   .title("Player points")
+//   .scale(quantize);
 
-svg.select(".legendLinear")
-.attr('transform', 'translate(660,20)')
-  .call(legendquantize);
+// svg.select(".legendLinear")
+// .attr('transform', 'translate(660,20)')
+//   .call(legendquantize);
           
+        //create legend
+        // var legendScale = d3.scale.ordinal()
+        //     .domain(['Least', 'Most'])
+        //     .range(['least', 'most'])
+
+        // //d3-legend
+        // var legend = d3.legend.color()
+        //     .shapePadding(5)
+        //     .useClass(true)
+        //     .title("Player points")
+        //     .scale(legendScale);
+
+        // svg.append('g')
+        //     .attr('transform', 'translate(680,0)')
+        //     .call(legend);
+
+        // //create legend
+        // var legendScale1 = d3.scale.ordinal()
+        //     .domain(['Lowest', 'Highest'])
+        //     .range(['lowest', 'highest'])
+
+        // //d3-legend
+        // var legend1 = d3.legend.color()
+        //     .shapePadding(5)
+        //     .useClass(true)
+        //     .title("Chemistry")
+        //     .scale(legendScale1);
+
+        // svg.append('g')
+        //     .attr('transform', 'translate(680,80)')
+        //     .call(legend1);
 
 
 d3.csv("Montreal_players" + year + ".csv", function(error, playerData) {

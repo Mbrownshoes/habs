@@ -23,7 +23,7 @@ for tr in rows:
         if teamLink == '/teams/PHX/':
             teamLink = '/teams/ARI/'
     
-        # teamLink = '/teams/CBJ/'
+        teamLink = '/teams/VAN/'
         teamUrl="http://www.hockey-reference.com" + teamLink + season+ ".html"
     
         # load each teams page
@@ -45,9 +45,9 @@ for tr in rows:
             team_name = 'NY Rangers'
         elif teamLink == '/teams/STL/':
             team_name = 'St. Louis'
-    
+        
         print(teamLink)
-    
+
     #    players_table=soup.find("table", {'class' : 'sortable stats_table'})
         players_table=soup.find("div", {'id' : 'div_skaters'})
         #find each player and get their url
@@ -144,9 +144,9 @@ for tr in rows:
             for ind, val in enumerate(players):
                 # save just the last names
                 if val == 'Daniel Sedin ':
-                    val = 'D. Sedin '
+                    val1 = 'D. Sedin '
                 elif val == 'Henrik Sedin ':
-                    val = 'H. Sedin '    
+                    val1 = 'H. Sedin '    
                 else:
                     val1 = val.split(' ',1)[1]
                 writer.writerow([val1, points_list[val]])  

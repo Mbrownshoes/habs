@@ -23,7 +23,6 @@ for tr in rows:
         if teamLink == '/teams/PHX/':
             teamLink = '/teams/ARI/'
     
-        teamLink = '/teams/VAN/'
         teamUrl="http://www.hockey-reference.com" + teamLink + season+ ".html"
     
         # load each teams page
